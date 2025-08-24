@@ -13,8 +13,10 @@ from loguru import logger
 from google.protobuf import text_format
 from tensorflow.core.framework import op_def_pb2 
 
+# 获取脚本所在目录
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 prefix = 'tf.raw_ops.{}'
-MAX_FUZZ_ITER = 200
+MAX_FUZZ_ITER = 500
 ST_END = 0
 ST_FIX_BY_INDX = 1
 ST_FIX_BY_NAME = 2
@@ -335,10 +337,10 @@ def fuzz_single(op, op_info):
         
 known = ['Abort', 'AudioSummaryV2', 'CollectiveInitializeCommunicator', 'Diag']
 
-OP_DICT = parser('ops.pbtxt', debug=False, debug_target='SetSize')
+OP_DICT = parser(os.path.join(SCRIPT_DIR, 'ops.pbtxt'), debug=False, debug_target='SetSize')
 flag = 0
 for idx, (op, op_info) in enumerate(OP_DICT.items()):
-    if op == 'RaggedTensorToVariantGradient':
+    """if op == 'RaggedTensorToVariantGradient':
         flag = 1
         continue
     if flag == 0:
@@ -346,7 +348,7 @@ for idx, (op, op_info) in enumerate(OP_DICT.items()):
     try:
         fuzz_single(op, op_info)
     except:
-        pass
-    # if op == 'CollectiveInitializeCommunicator':
-    #     fuzz_single(op, op_info)
-    #     exit()
+        pass"""
+    if op == 'CollectiveInitializeCommunicator':
+        fuzz_single(op, op_info)
+        exit()

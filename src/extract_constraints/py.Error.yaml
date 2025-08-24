@@ -1,5 +1,5 @@
 rules:
-- id: Python Error
+- id: python_error
   patterns:
     - pattern-either:
       - pattern: ValueError(...)
